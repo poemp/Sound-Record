@@ -27,13 +27,8 @@
             });
         }
 
-        stopRecording() {
-            recorder.stop();
-        }
-        playRecording() {
-            recorder.play(audio);
-        }
         uploadAudio() {
+            recorder.stop();
             recorder.upload("http://127.0.0.1:8080/record", function (state, e) {
                 switch (state) {
                     case 'uploading':
@@ -61,8 +56,6 @@
             super(props);
             audio = document.querySelector('audio');
             this.startRecording = this.startRecording.bind(this);
-            this.stopRecording = this.stopRecording.bind(this);
-            this.playRecording = this.playRecording.bind(this);
             this.uploadAudio = this.uploadAudio.bind(this);
         }
         render(){
@@ -71,9 +64,7 @@
                     <audio controls autoPlay></audio>
                     <div>
                         <input onClick={this.startRecording} type="button" value="录音"/>
-                        <input onClick={this.stopRecording} type="button" value="停止"/>
-                        <input onClick={this.playRecording} type="button" value="播放"/>
-                        <input onClick={this.uploadAudio} type="button" value="提交"/>
+                        <input onClick={this.uploadAudio} type="button" value="识别"/>
                     </div>
                 </div>
             )
