@@ -19,13 +19,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootApplication
 @Controller
 @RequestMapping("")
-public class SoundRecord{
+public class SoundRecord {
     /**
-     *
      * @param args
      */
     public static void main(String[] args) {
@@ -33,31 +33,31 @@ public class SoundRecord{
     }
 
 
-
     @RequestMapping("")
-    public String index(){
-        return  "/index.html";
+    public String index() {
+        return "/index.html";
     }
 
     @RequestMapping("/record")
     @ResponseBody
-    public void record(HttpServletRequest request){
+    public String record(HttpServletRequest request) {
         StandardMultipartHttpServletRequest multiRequest = (StandardMultipartHttpServletRequest) request;
         Collection<MultipartFile> files = multiRequest.getFileMap().values();
-        for (MultipartFile file : files) {
-            try {
-                byte[] bytes = file.getBytes();
-                String contentType = file.getContentType();
-                String format = contentType.substring(contentType.indexOf("/")+1);
-                System.err.println(bytes.length+ "   " + fromateDate()+ "." + format);
-                AipSpeechApi.translator(bytes,format);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        MultipartFile file = files.toArray(new MultipartFile[files.size()])[0];
+        try {
+            byte[] bytes = file.getBytes();
+            String contentType = file.getContentType();
+            String format = contentType.substring(contentType.indexOf("/") + 1);
+            System.err.println(bytes.length + "   " + fromateDate() + "." + format);
+            return AipSpeechApi.translator(bytes, format);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return "错误";
+
     }
 
-    public static String fromateDate(){
+    public static String fromateDate() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         return dateFormat.format(new Date());
     }

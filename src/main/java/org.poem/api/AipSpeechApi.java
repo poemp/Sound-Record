@@ -15,7 +15,7 @@ public class AipSpeechApi {
      * @param bytes 字节
      * @param format 格式
      */
-    public static void translator(byte[] bytes,String format) {
+    public static String translator(byte[] bytes,String format) {
         // 初始化一个AipSpeech
         AipSpeech client = new AipSpeech(APP_ID, API_KEY, SECRET_KEY);
 
@@ -27,9 +27,9 @@ public class AipSpeechApi {
         JSONObject res = client.asr(bytes, format, 16000, null);
         int code = res.getInt("err_no");
         if(null != SpeachCode.message(code)){
-            System.err.println(SpeachCode.message(code));
+            return SpeachCode.message(code);
         }else{
-            System.err.println(res.get("result"));
+            return res.get("result") == null ? null : res.getString("result");
         }
     }
 }
