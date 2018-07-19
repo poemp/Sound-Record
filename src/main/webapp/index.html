@@ -6,55 +6,83 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="wrapper">
-    <audio controls autoplay></audio>
-    <div>
-        <input onclick="startRecording()" type="button" value="录音" />
-        <input onclick="stopRecording()" type="button" value="停止" />
-        <input onclick="playRecording()" type="button" value="播放" />
-        <input onclick="uploadAudio()" type="button" value="提交" />
-    </div>
-</div>
-
 <script type="text/javascript" src="recorder.js"></script>
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<!-- 生产环境中不建议使用 -->
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 
-<script>
+<div id="example"></div>
+
+<script type="text/babel">
+
+    var audio;
     var recorder;
-    var audio = document.querySelector('audio');
-    function startRecording() {
-        HZRecorder.get(function (rec) {
-            recorder = rec;
-            recorder.start();
-        });
-    }
-    function stopRecording() {
-        recorder.stop();
-    }
-    function playRecording() {
-        recorder.play(audio);
-    }
-    function uploadAudio() {
-        recorder.upload("http://127.0.0.1:8080/record", function (state, e) {
-            switch (state) {
-                case 'uploading':
-                    var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
-                    console.log(percentComplete);
-                    break;
-                case 'ok':
-                    //alert(e.target.responseText);
-                    alert("上传成功");
-                    // window.location.href="VideoSearchServlet.do";
-                    break;
-                case 'error':
-                    alert("上传失败");
-                    break;
-                case 'cancel':
-                    alert("上传被取消");
-                    break;
-            }
-        });
-    }
 
+    class Record extends React.Component{
+
+        startRecording() {
+            HZRecorder.get(function (rec) {
+                recorder = rec;
+                recorder.start();
+            });
+        }
+
+        stopRecording() {
+            recorder.stop();
+        }
+        playRecording() {
+            recorder.play(audio);
+        }
+        uploadAudio() {
+            recorder.upload("http://127.0.0.1:8080/record", function (state, e) {
+                switch (state) {
+                    case 'uploading':
+                        var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
+                        console.log(percentComplete);
+                        break;
+                    case 'ok':
+                        //alert(e.target.responseText);
+                        alert("上传成功");
+                        // window.location.href="VideoSearchServlet.do";
+                        break;
+                    case 'error':
+                        alert("上传失败");
+                        break;
+                    case 'cancel':
+                        alert("上传被取消");
+                        break;
+                }
+            });
+        }
+
+
+        constructor(props){
+            super(props);
+            audio = document.querySelector('audio');
+            this.startRecording = this.startRecording.bind(this);
+            this.stopRecording = this.stopRecording.bind(this);
+            this.playRecording = this.playRecording.bind(this);
+            this.uploadAudio = this.uploadAudio.bind(this);
+        }
+        render(){
+            return (
+                <div id="wrapper">
+                    <audio controls autoPlay></audio>
+                    <div>
+                        <input onClick={this.startRecording} type="button" value="录音"/>
+                        <input onClick={this.stopRecording} type="button" value="停止"/>
+                        <input onClick={this.playRecording} type="button" value="播放"/>
+                        <input onClick={this.uploadAudio} type="button" value="提交"/>
+                    </div>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Record></Record>,
+        document.getElementById("example")
+    );
 </script>
 </body>
 </html>
