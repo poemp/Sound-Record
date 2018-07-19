@@ -2,6 +2,7 @@ package org.poem;
 
 
 import org.apache.commons.io.IOUtils;
+import org.poem.api.AipSpeechApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 @SpringBootApplication
 @Controller
@@ -40,19 +44,21 @@ public class SoundRecord{
     public void record(HttpServletRequest request){
         StandardMultipartHttpServletRequest multiRequest = (StandardMultipartHttpServletRequest) request;
         Collection<MultipartFile> files = multiRequest.getFileMap().values();
-        FileOutputStream fileOutputStream = null;
         for (MultipartFile file : files) {
             try {
                 byte[] bytes = file.getBytes();
-                System.err.println(bytes.length);
-
-                fileOutputStream = new FileOutputStream(new File(file.getOriginalFilename()));
-                fileOutputStream.write(bytes,0 , bytes.length);
+                String contentType = file.getContentType();
+                String format = contentType.substring(contentType.indexOf("/")+1);
+                System.err.println(bytes.length+ "   " + fromateDate()+ "." + format);
+                AipSpeechApi.translator(bytes,format);
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                IOUtils.closeQuietly(fileOutputStream);
             }
         }
+    }
+
+    public static String fromateDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        return dateFormat.format(new Date());
     }
 }
