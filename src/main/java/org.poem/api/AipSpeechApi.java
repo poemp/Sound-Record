@@ -25,11 +25,12 @@ public class AipSpeechApi {
 
         //调用接口
         JSONObject res = client.asr(bytes, format, 16000, null);
+        System.out.println(res);
         int code = res.getInt("err_no");
         if(null != SpeachCode.message(code)){
             return SpeachCode.message(code);
         }else{
-            return res.get("result") == null ? null : res.getString("result");
+            return res.get("result") == null ? null : res.getJSONArray("result").toString();
         }
     }
 }

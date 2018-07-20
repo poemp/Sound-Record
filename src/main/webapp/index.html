@@ -29,7 +29,7 @@
 
         uploadAudio() {
             recorder.stop();
-            recorder.upload("http://127.0.0.1:8080/record", function (state, e) {
+            recorder.upload("http://127.0.0.1:8089/record", function (state, e) {
                 switch (state) {
                     case 'uploading':
                         var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
